@@ -1,0 +1,29 @@
+{
+    "author": "juc-y systems",
+    "dependencies": {},
+    "keywords": [],
+    "name": "firstpebble",
+    "pebble": {
+        "capabilities": [
+            ""
+        ],
+        "displayName": "FirstPebble",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": []
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk"
+        ],
+        "uuid": "2f6af177-49d8-429c-a434-a0e0783a8c08",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}
