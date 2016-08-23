@@ -5,6 +5,9 @@ static TextLayer *s_time_layer;
 
 static GFont s_time_font;
 
+static BitmapLayer *s_background_layer;
+static GBitmap *s_background_bitmap;
+
 static void update_time(){
   time_t temp = time(NULL);
   struct tm *tick_time = localtime(&temp);
@@ -24,6 +27,12 @@ static void main_window_load(Window *window){
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
   
+  s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
+  s_background_layer = bitmap_layer_create(bounds);
+  
+  bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_background_layer));
+  
   s_time_layer = text_layer_create(
     GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50));
   
@@ -36,12 +45,15 @@ static void main_window_load(Window *window){
   s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_KEY_ROBOTO_LIGHT_ITALIC_42));
   text_layer_set_font(s_time_layer, s_time_font);
   
-  layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_time_layer));  
 }
 
 static void main_window_unload(Window *window){
   text_layer_destroy(s_time_layer);
   fonts_unload_custom_font(s_time_font);
+  
+  gbitmap_destroy(s_background_bitmap);
+  bitmap_layer_destroy(s_background_layer);  
 }
 
 static void init() {
