@@ -12,7 +12,14 @@
         "messageKeys": [],
         "projectType": "native",
         "resources": {
-            "media": []
+            "media": [
+                {
+                    "file": "fonts/RobotoCondensed-LightItalic.ttf",
+                    "name": "FONT_KEY_ROBOTO_LIGHT_ITALIC_42",
+                    "targetPlatforms": null,
+                    "type": "font"
+                }
+            ]
         },
         "sdkVersion": "3",
         "targetPlatforms": [
