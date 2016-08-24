@@ -21,6 +21,12 @@
                 },
                 {
                     "file": "fonts/RobotoCondensed-LightItalic.ttf",
+                    "name": "FONT_KEY_ROBOTO_LIGHT_ITALIC_20",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/RobotoCondensed-LightItalic.ttf",
                     "name": "FONT_KEY_ROBOTO_LIGHT_ITALIC_42",
                     "targetPlatforms": null,
                     "type": "font"

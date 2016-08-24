@@ -1,12 +1,31 @@
 #include <pebble.h>
 
 static Window *s_main_window;
-static TextLayer *s_time_layer;
 
+static TextLayer *s_time_layer;
 static GFont s_time_font;
 
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
+
+static TextLayer *s_weather_layer;
+static GFont s_weather_font;
+
+static void inbox_received_callback(DictionaryIterator *iterator, void *context){
+  
+}
+
+static void inbox_dropped_callback(AppMessageResult reason, void *context){
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+}
+
+static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context){
+  APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
+}
+
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context){
+  APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+}
 
 static void update_time(){
   time_t temp = time(NULL);
@@ -46,9 +65,24 @@ static void main_window_load(Window *window){
   text_layer_set_font(s_time_layer, s_time_font);
   
   layer_add_child(window_layer, text_layer_get_layer(s_time_layer));  
+
+  s_weather_layer = text_layer_create(
+  GRect(0, PBL_IF_ROUND_ELSE(125, 120), bounds.size.w, 25));
+  
+  text_layer_set_background_color(s_weather_layer, GColorClear);
+  text_layer_set_text_color(s_weather_layer, GColorWhite);
+  text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_weather_layer, "Loading...");
+
+  s_weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_KEY_ROBOTO_LIGHT_ITALIC_20));
+  text_layer_set_font(s_weather_layer, s_weather_font);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_weather_layer));
 }
 
 static void main_window_unload(Window *window){
+  text_layer_destroy(s_weather_layer);
+  fonts_unload_custom_font(s_weather_font);
+
   text_layer_destroy(s_time_layer);
   fonts_unload_custom_font(s_time_font);
   
@@ -58,6 +92,7 @@ static void main_window_unload(Window *window){
 
 static void init() {
   s_main_window = window_create();
+  window_set_background_color(s_main_window, GColorBlack);
   
   window_set_window_handlers(s_main_window, (WindowHandlers){
     .load = main_window_load,
@@ -65,10 +100,18 @@ static void init() {
   });
   
   window_stack_push(s_main_window, true);
-  
-  update_time();
-  
+  update_time(); 
+ 
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+  
+  app_message_register_inbox_received(inbox_received_callback);
+  const int inbox_size = 128;
+  const int outbox_size = 128;
+  app_message_open(inbox_size, outbox_size);
+  
+  app_message_register_inbox_dropped(inbox_dropped_callback);
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
 }
 
 static void deinit() {
